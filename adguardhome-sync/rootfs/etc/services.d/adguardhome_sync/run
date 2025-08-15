@@ -1,0 +1,16 @@
+#!/usr/bin/with-contenv bashio
+# ==============================================================================
+# Run AdGuardHome Sync using the generated config file
+# s6-overlay docs: https://github.com/just-containers/s6-overlay
+# ==============================================================================
+
+# Config file path (matches cont-init.d/config.sh)
+CONFIG_FILE="${CONFIG_FILE:-/etc/adguardhome_sync/adguardhome_sync.yaml}"
+
+if [ ! -f "$CONFIG_FILE" ]; then
+    bashio::log.error "Config file ${CONFIG_FILE} not found! Did cont-init.d run?"
+    exit 1
+fi
+
+bashio::log.info "Starting AdGuardHome Sync..."
+exec /usr/bin/adguardhome-sync run --config "$CONFIG_FILE"

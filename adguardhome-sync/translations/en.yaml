@@ -1,0 +1,22 @@
+configuration:
+  cron:
+    name: Cron
+    description: Cron expression for the sync interval
+  run_on_start:
+    name: Run on start
+    description: Run the sync on add-on startup
+  continue_on_error:
+    name: Continue on error
+    description: Continue the sync on single errors, but log it
+  origin_url:
+    name: Origin instance url
+    description: Url of the origin AdGuard Home instance
+  origin_username:
+    name: Origin instance username
+    description: Username for login of the origin AdGuard Home instance
+  origin_password:
+    name: Origin instance password
+    description: Password for login of the origin AdGuard Home instance
+  replicas:
+    name: Replicas
+    description: List of replica instances with url, username and password
