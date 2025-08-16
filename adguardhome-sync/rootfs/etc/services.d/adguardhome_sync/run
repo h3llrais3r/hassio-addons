@@ -5,7 +5,7 @@
 # ==============================================================================
 
 # Config file path (matches cont-init.d/config.sh)
-CONFIG_FILE="${CONFIG_FILE:-/etc/adguardhome_sync/adguardhome_sync.yaml}"
+CONFIG_FILE="${CONFIG_FILE:-/etc/adguardhome-sync/adguardhome-sync.yaml}"
 
 if [ ! -f "$CONFIG_FILE" ]; then
     bashio::log.error "Config file ${CONFIG_FILE} not found! Did cont-init.d run?"

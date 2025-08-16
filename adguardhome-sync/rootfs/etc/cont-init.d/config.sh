@@ -1,7 +1,7 @@
 #!/usr/bin/with-contenv bashio
-# Generate or update the adguardhome_sync.yaml config file from HA add-on settings
+# Generate or update the adguardhome-sync.yaml config file from HA add-on settings
 
-CONFIG_FILE="${CONFIG_FILE:-/etc/adguardhome_sync/adguardhome_sync.yaml}"
+CONFIG_FILE="${CONFIG_FILE:-/etc/adguardhome-sync/adguardhome-sync.yaml}"
 
 # Ensure the folder exists
 mkdir -p "$(dirname "$CONFIG_FILE")"
