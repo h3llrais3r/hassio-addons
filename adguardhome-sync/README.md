@@ -8,7 +8,7 @@ This add-on uses [bakito/adguardhome-sync](https://github.com/bakito/adguardhome
 
 - Run once or on a cron schedule
 - Configure one or more replicate instances
-- Optional embedded web/API UI
+- Embedded web/API UI
 
 ## Installation
 
