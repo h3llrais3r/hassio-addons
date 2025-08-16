@@ -4,8 +4,8 @@ FROM $BUILD_FROM
 
 # Setup base
 ARG BUILD_ARCH
-RUN apk add --no-cache wget && \
-    wget -O /usr/bin/yq https://github.com/mikefarah/yq/releases/latest/download/yq_linux_${BUILD_ARCH} && \
+RUN curl -L -o /usr/bin/yq \
+    https://github.com/mikefarah/yq/releases/latest/download/yq_linux_${BUILD_ARCH} && \
     chmod +x /usr/bin/yq
 
 # Download and install AdGuardHome Sync
@@ -21,5 +21,5 @@ RUN curl -L -o /tmp/adguardhome-sync.tar.gz \
 COPY rootfs /
 
 # Health check
-HEALTHCHECK --interval=30s --timeout=10s --start-period=30s \
-  CMD curl -f http://localhost:8080/health || exit 1
+HEALTHCHECK --interval=30s --timeout=10s --retries=3 --start-period=30s \
+  CMD curl -fsS http://127.0.0.1:8080/ || exit 1
