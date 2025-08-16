@@ -1,6 +1,8 @@
 # AdGuardHome Sync
 
-This add-on packages [bakito/adguardhome-sync](https://github.com/bakito/adguardhome-sync) to replicate AdGuard Home configuration from an origin instance to one or more replica instances.
+Synchronize your main AdGuard Home configuration to one or more replica instances.
+
+This add-on uses [bakito/adguardhome-sync](https://github.com/bakito/adguardhome-sync).
 
 ## Features
 
