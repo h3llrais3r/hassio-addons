@@ -24,7 +24,7 @@ This add-on uses [bakito/adguardhome-sync](https://github.com/bakito/adguardhome
 
 ## Installation
 
-1. Add this repository to Home Assistant: **Settings → Add-ons → Add-on Store → ⋮ → Repositories**
+1. Add this repository (`https://github.com/h3llrais3r/hassio-addons`) to Home Assistant: **Settings → Add-ons → Add-on Store → ⋮ → Repositories**
 2. Install **AdGuardHome Sync**
 3. Configure origin/replica instances in add-on options
 4. Start the add-on
