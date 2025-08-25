@@ -1,0 +1,29 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "rebaseWhen": "behind-base-branch",
+  "dependencyDashboard": true,
+  "labels": ["dependencies"],
+  "commitMessagePrefix": "⬆️",
+  "commitMessageTopic": "{{depName}}",
+  "customManagers": [
+    {
+      "customType": "regex",
+      "fileMatch": ["/Dockerfile$", "/build.yaml$"],
+      "matchStringsStrategy": "any",
+      "matchStrings": [
+        "ARG BUILD_FROM=(?<depName>.*?):(?<currentValue>.*?)\\s+",
+        "(aarch64|amd64|armhf|armv7|i386):\\s[\"']?(?<depName>.*?):(?<currentValue>.*?)[\"']?\\s"
+      ],
+      "datasourceTemplate": "docker"
+    },
+    {
+      "customType": "regex",
+      "fileMatch": ["/build.yaml$"],
+      "matchStrings": [
+        "ADGUARDHOME_SYNC_VERSION:\\s[\"']?(?<currentValue>.*?)[\"']?\\s"
+      ],
+      "datasourceTemplate": "github-releases",
+      "depNameTemplate": "bakito/adguardhome-sync"
+    }
+  ]
+}
