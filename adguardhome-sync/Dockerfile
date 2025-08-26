@@ -12,12 +12,10 @@ RUN case "${BUILD_ARCH}" in \
         "i386")    YQ_ARCH="386" ;; \
         *) echo "Unsupported yq architecture: ${BUILD_ARCH}" && exit 1 ;; \
     esac && \
-    curl -L -o /tmp/yq.tar.gz \
-        https://github.com/mikefarah/yq/releases/latest/download/yq_linux_${YQ_ARCH}.tar.gz && \
     mkdir -p /usr/bin && \
-    tar -xzf /tmp/yq.tar.gz -C /usr/bin && \
-    chmod +x /usr/bin/yq && \
-    rm -rf /tmp/*
+    curl -L -o /usr/bin/yq \
+        https://github.com/mikefarah/yq/releases/latest/download/yq_linux_${YQ_ARCH} && \
+    chmod +x /usr/bin/yq
 
 # Download and install AdGuardHome Sync
 ARG ADGUARDHOME_SYNC_VERSION
@@ -29,9 +27,9 @@ RUN case "${BUILD_ARCH}" in \
         "i386")    ADGUARDHOME_SYNC_ARCH="386" ;; \
         *) echo "Unsupported adguardhome-sync architecture: ${BUILD_ARCH}" && exit 1 ;; \
     esac && \
+    mkdir -p /usr/bin && \
     curl -L -o /tmp/adguardhome-sync.tar.gz \
         https://github.com/bakito/adguardhome-sync/releases/download/v${ADGUARDHOME_SYNC_VERSION}/adguardhome-sync_${ADGUARDHOME_SYNC_VERSION}_linux_${ADGUARDHOME_SYNC_ARCH}.tar.gz && \
-    mkdir -p /usr/bin && \
     tar -xzf /tmp/adguardhome-sync.tar.gz -C /usr/bin && \
     chmod +x /usr/bin/adguardhome-sync && \
     rm -rf /tmp/*
