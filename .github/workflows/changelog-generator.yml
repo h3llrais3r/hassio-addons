@@ -1,4 +1,4 @@
-name: Update changelog
+name: Changelog generator
 
 on:
   push:
@@ -6,7 +6,8 @@ on:
       - master
 
 jobs:
-  update-changelog:
+  generate-changelogs:
+    name: Generate changelogs
     runs-on: ubuntu-latest
     steps:
       # Checkout repository with full history
@@ -27,8 +28,8 @@ jobs:
           ADDON_DIRS=$(find . -maxdepth 1 -mindepth 1 -type d ! -name ".*")
           echo "addons=$ADDON_DIRS" >> $GITHUB_OUTPUT
 
-      # Generate and update CHANGELOG.md per addon
-      - name: Generate and update CHANGELOG.md per addon
+      # Generate CHANGELOG.md per addon
+      - name: Generate CHANGELOG.md per addon
         run: |
           for ADDON_PATH in ${{ steps.addons.outputs.addons }}; do
             echo "Processing $ADDON_PATH"
@@ -36,7 +37,7 @@ jobs:
             # Skip if nothing changed in source/config files (excluding CHANGELOG.md)
             CHANGES=$(git diff --name-only HEAD~1 HEAD "$ADDON_PATH" | grep -v "CHANGELOG.md" || true)
             if [ -z "$CHANGES" ]; then
-              echo "No source/config changes in $ADDON_PATH, skipping changelog."
+              echo "No source/config changes in $ADDON_PATH, skipping changelog generation"
               continue
             fi
 
