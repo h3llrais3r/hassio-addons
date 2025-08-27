@@ -9,10 +9,12 @@ jobs:
   update-changelog:
     runs-on: ubuntu-latest
     steps:
-      # Checkout repository
+      # Checkout repository with full history
       - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0   # Fetch all commits to enable HEAD~1
 
-      # Install auto-changelog and yq
+      # Install dependencies
       - name: Install dependencies
         run: |
           npm install -g auto-changelog
@@ -25,24 +27,28 @@ jobs:
           ADDON_DIRS=$(find . -maxdepth 1 -mindepth 1 -type d ! -name ".*")
           echo "addons=$ADDON_DIRS" >> $GITHUB_OUTPUT
 
-      # Generate and update CHANGELOG.md for changed addons
+      # Generate and update CHANGELOG.md per addon
       - name: Generate and update CHANGELOG.md per addon
         run: |
           for ADDON_PATH in ${{ steps.addons.outputs.addons }}; do
             echo "Processing $ADDON_PATH"
 
-            # Check for changes excluding CHANGELOG.md
+            # Skip if nothing changed in source/config files (excluding CHANGELOG.md)
             CHANGES=$(git diff --name-only HEAD~1 HEAD "$ADDON_PATH" | grep -v "CHANGELOG.md" || true)
             if [ -z "$CHANGES" ]; then
               echo "No source/config changes in $ADDON_PATH, skipping changelog."
               continue
             fi
 
-            # Detect version bump in config.yaml
             CONFIG_FILE="$ADDON_PATH/config.yaml"
             SKIP_COMMIT=false
             if [ -f "$CONFIG_FILE" ]; then
-              OLD_VERSION=$(git show HEAD~1:"$CONFIG_FILE" 2>/dev/null | yq e '.version' -)
+              # Safely get OLD_VERSION, fallback if HEAD~1 doesn't exist
+              if git rev-parse HEAD~1 >/dev/null 2>&1; then
+                OLD_VERSION=$(git show HEAD~1:"$CONFIG_FILE" 2>/dev/null | yq e '.version' -)
+              else
+                OLD_VERSION=""
+              fi
               NEW_VERSION=$(git show HEAD:"$CONFIG_FILE" | yq e '.version' -)
               if [ "$OLD_VERSION" != "$NEW_VERSION" ]; then
                 echo "Release commit detected in $CONFIG_FILE, skipping changelog generation for this commit"
@@ -76,11 +82,15 @@ jobs:
               /^## \[Unreleased\]/ {print; print newlines; next}1
             ' "$TARGET" > "$TARGET.tmp" && mv "$TARGET.tmp" "$TARGET"
 
-            # Commit the changelog individually
-            git config user.name "github-actions"
-            git config user.email "github-actions@github.com"
+            # Commit only if there are staged changes
             git add "$TARGET"
-            git commit -m "Update $ADDON_PATH/CHANGELOG.md" || echo "No new changes for $ADDON_PATH"
+            if ! git diff --cached --quiet; then
+                git config user.name "github-actions"
+                git config user.email "github-actions@github.com"
+                git commit -m "Update $ADDON_PATH/CHANGELOG.md"
+            else
+                echo "No new changes to commit for $ADDON_PATH"
+            fi
           done
 
       # Push all commits
