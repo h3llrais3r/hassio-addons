@@ -68,7 +68,8 @@ jobs:
               --commit-limit false \
               --unreleased-only true \
               --output "$TEMP" \
-              --commit-filter "git log --pretty=format:'%H' -- $ADDON_PATH -- . ':(exclude)CHANGELOG.md'"
+              "$ADDON_PATH" \
+              ':(exclude)CHANGELOG.md'
 
             # Prepend new entries under [Unreleased]
             awk -v temp="$TEMP" '
