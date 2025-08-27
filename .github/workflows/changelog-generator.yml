@@ -44,23 +44,13 @@ jobs:
 
             CONFIG_FILE="$ADDON_PATH/config.yaml"
             SKIP_COMMIT=false
-            if [ -f "$CONFIG_FILE" ]; then
-              # Safely get OLD_VERSION, fallback if HEAD~1 doesn't exist
-              if git rev-parse HEAD~1 >/dev/null 2>&1; then
-                OLD_VERSION=$(git show HEAD~1:"$CONFIG_FILE" 2>/dev/null | yq e '.version' -)
-              else
-                OLD_VERSION=""
-              fi
-              # Get NEW_VERSION from the current HEAD
-              NEW_VERSION=$(git show HEAD:"$CONFIG_FILE" 2>/dev/null | yq e '.version' -)
-              # Skip changelog generation if this commit is a release commit
-              if [ "$OLD_VERSION" != "$NEW_VERSION" ]; then
-                echo "Release commit detected in $CONFIG_FILE, skipping changelog generation for this commit"
+            # Check if the version field changed in the last commit
+            if git diff HEAD~1 HEAD -- "$CONFIG_FILE" | grep -qE '^\+.*version:'; then
+                echo "Version change detected in $CONFIG_FILE, skipping changelog generation for this commit"
                 SKIP_COMMIT=true
-              fi
             fi
             if [ "$SKIP_COMMIT" = true ]; then
-              continue
+                continue
             fi
 
             # Paths for temporary and target changelog
