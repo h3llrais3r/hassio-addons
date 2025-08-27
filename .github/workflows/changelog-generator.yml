@@ -51,7 +51,9 @@ jobs:
               else
                 OLD_VERSION=""
               fi
-              NEW_VERSION=$(git show HEAD:"$CONFIG_FILE" | yq e '.version' -)
+              # Get NEW_VERSION from the current HEAD
+              NEW_VERSION=$(git show HEAD:"$CONFIG_FILE" 2>/dev/null | yq e '.version' -)
+              # Skip changelog generation if this commit is a release commit
               if [ "$OLD_VERSION" != "$NEW_VERSION" ]; then
                 echo "Release commit detected in $CONFIG_FILE, skipping changelog generation for this commit"
                 SKIP_COMMIT=true
