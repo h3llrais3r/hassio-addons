@@ -98,7 +98,6 @@ jobs:
       # Push all commits (rebase to avoid conflicts for already other commits)
       - name: Push commits
         run: |
-          git checkout master
           git fetch origin master
           git rebase origin/master
           git push origin master
