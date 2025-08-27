@@ -64,7 +64,7 @@ jobs:
             fi
 
             # Generate new changelog entries from commits affecting this folder
-            auto-changelog -p \
+            auto-changelog \
               --commit-limit false \
               --unreleased-only true \
               --output "$TEMP" \
