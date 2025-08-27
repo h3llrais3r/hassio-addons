@@ -1,0 +1,91 @@
+name: Update changelog
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  update-changelog:
+    runs-on: ubuntu-latest
+    steps:
+      # Checkout repository
+      - uses: actions/checkout@v3
+
+      # Install auto-changelog and yq
+      - name: Install dependencies
+        run: |
+          npm install -g auto-changelog
+          sudo apt-get update && sudo apt-get install -y yq
+
+      # Detect root-level addon folders
+      - name: Detect addon folders
+        id: addons
+        run: |
+          ADDON_DIRS=$(find . -maxdepth 1 -mindepth 1 -type d ! -name ".*")
+          echo "addons=$ADDON_DIRS" >> $GITHUB_OUTPUT
+
+      # Generate and update CHANGELOG.md for changed addons
+      - name: Generate and update CHANGELOG.md per addon
+        run: |
+          for ADDON_PATH in ${{ steps.addons.outputs.addons }}; do
+            echo "Processing $ADDON_PATH"
+
+            # Check for changes excluding CHANGELOG.md
+            CHANGES=$(git diff --name-only HEAD~1 HEAD "$ADDON_PATH" | grep -v "CHANGELOG.md" || true)
+            if [ -z "$CHANGES" ]; then
+              echo "No source/config changes in $ADDON_PATH, skipping changelog."
+              continue
+            fi
+
+            # Detect version bump in config.yaml
+            CONFIG_FILE="$ADDON_PATH/config.yaml"
+            SKIP_COMMIT=false
+            if [ -f "$CONFIG_FILE" ]; then
+              OLD_VERSION=$(git show HEAD~1:"$CONFIG_FILE" 2>/dev/null | yq e '.version' -)
+              NEW_VERSION=$(git show HEAD:"$CONFIG_FILE" | yq e '.version' -)
+              if [ "$OLD_VERSION" != "$NEW_VERSION" ]; then
+                echo "Release commit detected in $CONFIG_FILE, skipping changelog generation for this commit"
+                SKIP_COMMIT=true
+              fi
+            fi
+            if [ "$SKIP_COMMIT" = true ]; then
+              continue
+            fi
+
+            # Paths for temporary and target changelog
+            TEMP="$ADDON_PATH/CHANGELOG_temp.md"
+            TARGET="$ADDON_PATH/CHANGELOG.md"
+            mkdir -p "$(dirname "$TARGET")"
+
+            # Ensure CHANGELOG.md exists
+            if [ ! -f "$TARGET" ]; then
+              echo -e "## [Unreleased]\n" > "$TARGET"
+            fi
+
+            # Generate new changelog entries from commits affecting this folder
+            auto-changelog -p \
+              --commit-limit false \
+              --unreleased-only true \
+              --output "$TEMP" \
+              --commit-filter "git log --pretty=format:'%H' -- $ADDON_PATH -- . ':(exclude)CHANGELOG.md'"
+
+            # Prepend new entries under [Unreleased]
+            awk -v temp="$TEMP" '
+              BEGIN {while ((getline line < temp) > 0) {newlines = newlines line "\n"}}
+              /^## \[Unreleased\]/ {print; print newlines; next}1
+            ' "$TARGET" > "$TARGET.tmp" && mv "$TARGET.tmp" "$TARGET"
+
+            # Commit the changelog individually
+            git config user.name "github-actions"
+            git config user.email "github-actions@github.com"
+            git add "$TARGET"
+            git commit -m "Update $ADDON_PATH/CHANGELOG.md" || echo "No new changes for $ADDON_PATH"
+          done
+
+      # Push all commits
+      - name: Push commits
+        uses: ad-m/github-push-action@v0.6.0
+        with:
+          branch: master
+          github_token: ${{ secrets.GITHUB_TOKEN }}
