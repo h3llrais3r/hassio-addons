@@ -11,7 +11,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       # Checkout repository with full history
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v3
         with:
           fetch-depth: 0   # Fetch all commits to enable HEAD~1
 
@@ -94,9 +94,12 @@ jobs:
             fi
           done
 
-      # Push all commits
+      # Push all commits (rebase to avoid conflicts for already other commits)
       - name: Push commits
-        uses: ad-m/github-push-action@v0.8.0
-        with:
-          branch: master
-          github_token: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          git checkout master
+          git fetch origin master
+          git rebase origin/master
+          git push origin master
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
