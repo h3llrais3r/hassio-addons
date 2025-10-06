@@ -1,6 +1,6 @@
 # https://developers.home-assistant.io/docs/add-ons/configuration#add-on-config
 name: AdGuardHome Sync
-version: "0.1.0"
+version: "0.2.0"
 slug: adguardhome-sync
 description: Synchronize your main AdGuard Home configuration to one or more replica instances.
 url: https://github.com/h3llrais3r/hassio-addons/tree/master/adguardhome-sync
