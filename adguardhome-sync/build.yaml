@@ -11,4 +11,4 @@ labels:
   org.opencontainers.image.source: "https://github.com/h3llrais3r/hassio-addons/tree/master/adguardhome-sync"
   org.opencontainers.image.licenses: "MIT"
 args:
-  ADGUARDHOME_SYNC_VERSION: "0.8.1"
+  ADGUARDHOME_SYNC_VERSION: "0.8.2"
