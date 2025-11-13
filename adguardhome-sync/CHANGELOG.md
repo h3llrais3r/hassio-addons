@@ -2,6 +2,10 @@
 
 # Changelog
 
+## 0.2.1
+
+- Upgrade AdGuard Home Sync version to 0.8.2
+
 ## 0.2.0
 
 - Upgrade AdGuard Home Sync version to 0.8.1
