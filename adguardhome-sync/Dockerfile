@@ -7,9 +7,6 @@ ARG BUILD_ARCH
 RUN case "${BUILD_ARCH}" in \
         "amd64")   YQ_ARCH="amd64" ;; \
         "aarch64") YQ_ARCH="arm64" ;; \
-        "armv7")   YQ_ARCH="arm" ;; \
-        "armhf")   YQ_ARCH="arm" ;; \
-        "i386")    YQ_ARCH="386" ;; \
         *) echo "Unsupported yq architecture: ${BUILD_ARCH}" && exit 1 ;; \
     esac && \
     mkdir -p /usr/bin && \
@@ -22,9 +19,6 @@ ARG ADGUARDHOME_SYNC_VERSION
 RUN case "${BUILD_ARCH}" in \
         "amd64")   ADGUARDHOME_SYNC_ARCH="amd64" ;; \
         "aarch64") ADGUARDHOME_SYNC_ARCH="arm64" ;; \
-        "armv7")   ADGUARDHOME_SYNC_ARCH="armv7" ;; \
-        "armhf")   ADGUARDHOME_SYNC_ARCH="armv6" ;; \
-        "i386")    ADGUARDHOME_SYNC_ARCH="386" ;; \
         *) echo "Unsupported adguardhome-sync architecture: ${BUILD_ARCH}" && exit 1 ;; \
     esac && \
     mkdir -p /usr/bin && \
