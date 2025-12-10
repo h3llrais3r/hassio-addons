@@ -2,6 +2,11 @@
 
 # Changelog
 
+## 0.2.2
+
+- Drop unsupported architectures armhf, armv7 and i386
+- Upgrade HomeAssistant base images to version 3.23
+
 ## 0.2.1
 
 - Upgrade AdGuard Home Sync version to 0.8.2
