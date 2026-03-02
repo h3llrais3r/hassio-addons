@@ -2,6 +2,10 @@
 
 # Changelog
 
+## 0.3.0
+
+- Upgrade AdGuard Home Sync version to 0.9.0
+
 ## 0.2.2
 
 - Drop unsupported architectures armhf, armv7 and i386
