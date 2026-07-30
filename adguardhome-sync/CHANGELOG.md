@@ -2,6 +2,11 @@
 
 # Changelog
 
+## 0.3.1
+
+- Upgrade HomeAssistant base images to version 3.24
+- Upgrade AdGuard Home Sync version to 0.9.2
+
 ## 0.3.0
 
 - Upgrade AdGuard Home Sync version to 0.9.0
