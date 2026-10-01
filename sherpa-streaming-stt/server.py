@@ -22,9 +22,10 @@ from wyoming.info import AsrModel, AsrProgram, Attribution, Describe, Info
 from wyoming.server import AsyncEventHandler, AsyncServer, AsyncTcpServer
 
 _LOGGER = logging.getLogger("sherpa_streaming_stt")
-RATE = 16000
+ADDON_VERSION = os.environ.get("ADDON_VERSION", "unknown")
 MODEL_ROOT = Path(os.environ.get("MODEL_ROOT", "/config/models"))
 ASR_URL = "https://github.com/k2-fsa/sherpa-onnx/releases/download/asr-models/{}"
+RATE = 16000
 
 # Profiles intentionally cover several streaming model families and variants.
 # The archive names and model file layouts are from sherpa-onnx's published
@@ -324,11 +325,12 @@ async def main():
             version=p["archive"],
         ))
 
-    info = Info(asr=[AsrProgram(
+        info = Info(asr=[AsrProgram(
         name="sherpa-streaming-stt",
         description="Generic streaming ASR using multiple sherpa-onnx online model families",
         attribution=Attribution(name="k2-fsa sherpa-onnx", url="https://github.com/k2-fsa/sherpa-onnx"),
         installed=True,
+        version=ADDON_VERSION,
         supports_transcript_streaming=False,
         requires_external_vad=True,
         models=models,

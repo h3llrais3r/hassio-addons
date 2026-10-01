@@ -1,6 +1,9 @@
 # Build from debian based slim image with Python 3.12 for proper compatibility with sherpa-onnx.
 FROM python:3.12-slim
 
+# keep this in sync with config.yaml version
+ARG ADDON_VERSION="0.1.0"
+
 ARG SHERPA_ONNX_VERSION="1.13.8"
 ARG WYOMING_VERSION="1.10.2"
 
