@@ -75,32 +75,15 @@ PROFILES = {
         "languages": ["en-US", "en-GB"],
         "language_option": False,
     },
-    "zipformer-fr": {
-        "name": "Zipformer streaming French (2023-04-14)",
-        "archive": "sherpa-onnx-streaming-zipformer-fr-2023-04-14.tar.bz2",
+    "zipformer-en-kroko": {
+        "name": "Kroko streaming Zipformer English",
+        "archive": "sherpa-onnx-streaming-zipformer-en-kroko-2025-08-06.tar.bz2",
         "kind": "transducer",
-        "files": {"encoder": "encoder-epoch-29-avg-9-with-averaged-model.int8.onnx", "decoder": "decoder-epoch-29-avg-9-with-averaged-model.onnx", "joiner": "joiner-epoch-29-avg-9-with-averaged-model.int8.onnx", "tokens": "tokens.txt"},
-        "languages": ["fr-FR", "fr-CA"],
-        "language_option": False,
-    },
-    "zipformer-zh-en": {
-        "name": "Zipformer streaming Chinese + English (2023-02-20)",
-        "archive": "sherpa-onnx-streaming-zipformer-bilingual-zh-en-2023-02-20.tar.bz2",
-        "kind": "transducer",
-        "files": {"encoder": "encoder-epoch-99-avg-1.int8.onnx", "decoder": "decoder-epoch-99-avg-1.onnx", "joiner": "joiner-epoch-99-avg-1.int8.onnx", "tokens": "tokens.txt"},
-        "languages": ["zh-CN", "en-US"],
-        "language_option": False,
-    },
-    "paraformer-zh-en": {
-        "name": "Streaming Paraformer Chinese + English",
-        "archive": "sherpa-onnx-streaming-paraformer-bilingual-zh-en.tar.bz2",
-        "kind": "paraformer",
-        "files": {"encoder": "encoder.int8.onnx", "decoder": "decoder.int8.onnx", "tokens": "tokens.txt"},
-        "languages": ["zh-CN", "en-US"],
+        "files": {"encoder": "encoder.onnx", "decoder": "decoder.onnx", "joiner": "joiner.onnx", "tokens": "tokens.txt"},
+        "languages": ["en-US"],
         "language_option": False,
     },
 }
-
 
 
 def options():

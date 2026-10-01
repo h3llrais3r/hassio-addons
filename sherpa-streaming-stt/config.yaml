@@ -17,7 +17,7 @@ options:
   beam_size: 4
   zeroconf: true
 schema:
-  model: list(nemotron-80|nemotron-160|nemotron-560|nemotron-1120|zipformer-en|zipformer-fr|zipformer-zh-en|paraformer-zh-en)
+  model: list(nemotron-80|nemotron-160|nemotron-560|nemotron-1120|zipformer-en|zipformer-en-kroko)
   language: str
   num_threads: int(1,)
   beam_size: int(1,8)
