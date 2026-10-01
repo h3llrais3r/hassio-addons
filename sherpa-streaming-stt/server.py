@@ -123,7 +123,23 @@ def download_and_extract(profile_id: str) -> Path:
     _LOGGER.info("Downloading model %s from %s", profile_id, url)
     try:
         with urllib.request.urlopen(url, timeout=300) as src, tmp.open("wb") as dst:
-            shutil.copyfileobj(src, dst, length=1024 * 1024)
+            total = int(src.headers.get("Content-Length", 0))
+            downloaded = 0
+            last_log = time.monotonic()
+            while True:
+                chunk = src.read(1024 * 1024)
+                if not chunk:
+                    break
+                dst.write(chunk)
+                downloaded += len(chunk)
+                now = time.monotonic()
+                if now - last_log >= 2:
+                    if total:
+                        percent = downloaded * 100 / total
+                        _LOGGER.info("Download progress: %.1f%% (%d / %d MB)", percent, downloaded // (1024 * 1024), total // (1024 * 1024))
+                    else:
+                        _LOGGER.info("Download progress: %d MB", downloaded // (1024 * 1024))
+                    last_log = now
         tmp.replace(archive)
         with tempfile.TemporaryDirectory(dir=MODEL_ROOT) as td_name:
             td = Path(td_name)
@@ -133,7 +149,7 @@ def download_and_extract(profile_id: str) -> Path:
                     target = (base / member.name).resolve()
                     if os.path.commonpath((str(base), str(target))) != str(base):
                         raise RuntimeError(f"Unsafe model archive member: {member.name}")
-                tar.extractall(td)
+                tar.extractall(td, filter="data")
             extracted = td / name
             if not extracted.is_dir():
                 dirs = [p for p in td.iterdir() if p.is_dir()]
@@ -165,7 +181,6 @@ def create_recognizer(profile_id: str, model_dir: Path, threads: int, beam_size:
             provider="cpu",
         )
 
-    method = "modified_beam_search" if beam_size > 1 else "greedy_search"
     return sherpa_onnx.OnlineRecognizer.from_transducer(
         encoder=str(model_dir / f["encoder"]),
         decoder=str(model_dir / f["decoder"]),
@@ -174,9 +189,8 @@ def create_recognizer(profile_id: str, model_dir: Path, threads: int, beam_size:
         num_threads=threads,
         sample_rate=RATE,
         feature_dim=80,
+        decoding_method="greedy_search",
         provider="cpu",
-        decoding_method=method,
-        max_active_paths=max(beam_size, 1),
     )
 
 
