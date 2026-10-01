@@ -1,0 +1,31 @@
+# https://developers.home-assistant.io/docs/add-ons/configuration#add-on-config
+name: Sherpa Streaming STT
+version: "0.1.0"
+slug: sherpa-streaming-stt
+description: Generic multi-model streaming speech-to-text for Home Assistant using sherpa-onnx.
+url: https://github.com/h3llrais3r/hassio-addons/tree/master/sherpa-streaming-stt
+arch:
+  - amd64
+  - aarch64
+init: false
+startup: services
+boot: auto
+options:
+  model: nemotron-560
+  language: auto
+  num_threads: 4
+  beam_size: 4
+  zeroconf: true
+schema:
+  model: list(nemotron-80|nemotron-160|nemotron-560|nemotron-1120|zipformer-en|zipformer-fr|zipformer-zh-en|paraformer-zh-en)
+  language: str
+  num_threads: int(1,)
+  beam_size: int(1,8)
+  zeroconf: bool
+ports:
+  10300/tcp: 10300
+ports_description:
+  10300/tcp: Wyoming STT
+map:
+  - type: addon_config
+    read_only: false
