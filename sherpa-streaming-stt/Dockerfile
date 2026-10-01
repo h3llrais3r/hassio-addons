@@ -11,13 +11,15 @@ ENV PYTHONUNBUFFERED=1 \
 
 RUN apk add --no-cache \
         python3 \
+        python3-dev \
         py3-pip \
         cmake \
         make \
-        g++ \
         gcc \
+        g++ \
         musl-dev \
         linux-headers \
+        git \
     && python3 -m venv /opt/venv \
     && /opt/venv/bin/pip install --upgrade pip \
     && /opt/venv/bin/pip install \
