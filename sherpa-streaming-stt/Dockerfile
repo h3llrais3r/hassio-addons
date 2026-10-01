@@ -9,18 +9,15 @@ ENV PYTHONUNBUFFERED=1 \
     PIP_NO_CACHE_DIR=1 \
     MODEL_ROOT=/config/models
 
-RUN apt-get update \
-    && apt-get install -y --no-install-recommends \
+RUN apk add --no-cache \
         python3 \
-        python3-venv \
+        py3-pip \
     && python3 -m venv /opt/venv \
     && /opt/venv/bin/pip install --upgrade pip \
     && /opt/venv/bin/pip install \
         "sherpa-onnx==${SHERPA_ONNX_VERSION}" \
         "wyoming==${WYOMING_VERSION}" \
-        "numpy>=2.0,<3" \
-    && apt-get clean \
-    && rm -rf /var/lib/apt/lists/*
+        "numpy>=2.0,<3"
 
 ENV PATH="/opt/venv/bin:${PATH}"
 
