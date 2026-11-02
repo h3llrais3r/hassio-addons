@@ -2,6 +2,10 @@
 
 # Changelog
 
+## 0.3.5
+
+- Upgrade AdGuard Home Sync version to 0.9.6
+
 ## 0.3.4
 
 - Upgrade AdGuard Home Sync version to 0.9.5
