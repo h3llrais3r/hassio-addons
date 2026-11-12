@@ -147,10 +147,10 @@ def download_archive(asset: dict, destination: Path):
                     else:
                         _LOGGER.info("Model download: %.1f MB", downloaded / (1024 * 1024))
                     last_log = now
-        if asset["size"] and destination.stat().st_size != asset["size"]:
+        if asset["size"] and partial_path.stat().st_size != asset["size"]:
             raise RuntimeError(
                 f"Downloaded archive size mismatch for {asset['name']}: "
-                f"expected {asset['size']} bytes, got {destination.stat().st_size}"
+                f"expected {asset['size']} bytes, got {partial_path.stat().st_size}"
             )
         partial_path.replace(destination)
     finally:
