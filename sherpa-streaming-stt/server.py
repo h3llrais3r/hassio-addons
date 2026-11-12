@@ -83,6 +83,14 @@ PROFILES = {
         "languages": ["en-US"],
         "language_option": False,
     },
+    "parakeet-nl": {
+        "name": "NVIDIA Parakeet TDT 0.6B v3 multilingual",
+        "archive": "sherpa-onnx-nemo-parakeet-tdt-0.6b-v3-int8.tar.bz2",
+        "kind": "offline_transducer",
+        "files": {"encoder": "encoder.int8.onnx", "decoder": "decoder.int8.onnx", "joiner": "joiner.int8.onnx", "tokens": "tokens.txt"},
+        "languages": ["nl-NL"],
+        "language_option": False,
+    },
 }
 
 
