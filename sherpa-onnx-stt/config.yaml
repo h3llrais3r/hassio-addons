@@ -11,8 +11,8 @@ init: false
 startup: services
 boot: auto
 options:
-  language: nl-NL
-  languages: "nl-NL,nl-BE"
+  language: en
+  languages: "bg,hr,cs,da,nl,en,et,fi,fr,de,el,hu,it,lv,lt,mt,pl,pt,ro,sk,sl,es,sv,ru,uk"
   model_archive: "sherpa-onnx-nemo-parakeet-tdt-0.6b-v3-int8.tar.bz2"
   model_type: offline_transducer
   num_threads: 4

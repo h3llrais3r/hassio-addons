@@ -1,0 +1,25 @@
+configuration:
+  model_archive:
+    name: Model archive
+    description: >-
+      Exact filename of the model archive to download. Browse available
+      archives at https://github.com/k2-fsa/sherpa-onnx/releases/tag/asr-models.
+  language:
+    name: Default language
+    description: >-
+      Language tag used when a Wyoming request does not specify a language and
+      included with the transcript. It does not force the offline model to
+      recognize speech in this language.
+  languages:
+    name: Advertised languages
+    description: >-
+      Comma-separated language tags advertised to Home Assistant and accepted
+      from requests, such as nl-NL,nl-BE,en-US. Use the exact tags Home Assistant
+      sends. This list does not change which languages the offline model can
+      recognize.
+  language_option:
+    name: Pass language to online model
+    description: >-
+      Pass the request language (or the default language) to Sherpa's streaming
+      model as a language hint. Only applies to online models that support this
+      option; it has no effect with offline models such as Parakeet.
