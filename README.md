@@ -13,3 +13,4 @@ https://github.com/h3llrais3r/hassio-addons
 ## Addons
 
 1. [AdGuardHome Sync](/adguardhome-sync/README.md): Synchronize your main AdGuard Home configuration to one or more replica instances.
+2. [Sherpa ONNX STT](/sherpa-onnx-stt/README.md): Run local speech-to-text in Home Assistant using [sherpa-onnx](https://github.com/k2-fsa/sherpa-onnx) and the Wyoming protocol.
