@@ -4,6 +4,16 @@ configuration:
     description: >-
       Exact filename of the model archive to download. Browse available
       archives at https://github.com/k2-fsa/sherpa-onnx/releases/tag/asr-models.
+  model_type:
+    name: Model type
+    description: >-
+      Select auto to detect the model type, or choose online_transducer or
+      offline_transducer to set it explicitly.
+  num_threads:
+    name: Number of threads
+    description: >-
+      Number of CPU threads used for speech recognition. More threads may
+      improve performance but use more CPU resources.
   language:
     name: Default language
     description: >-
@@ -14,7 +24,7 @@ configuration:
     name: Advertised languages
     description: >-
       Comma-separated language tags advertised to Home Assistant and accepted
-      from requests for the model. Use the exact tags Home Assistant sends. 
+      from requests for the model. Use the exact tags Home Assistant sends.
       This list does not change which languages the offline model can recognize.
   language_option:
     name: Pass language to online model
@@ -22,3 +32,13 @@ configuration:
       Pass the request language (or the default language) to Sherpa's streaming
       model as a language hint. Only applies to online models that support this
       option. It has no effect with offline models such as Parakeet.
+  offline_model_type:
+    name: Offline model type
+    description: >-
+      Select the offline recognizer type required by the model: transducer or
+      nemo_transducer.
+  zeroconf:
+    name: Enable Zeroconf discovery
+    description: >-
+      Advertise the Wyoming speech-to-text service on the local network so
+      Home Assistant can discover it automatically.
