@@ -1,0 +1,37 @@
+# https://developers.home-assistant.io/docs/add-ons/configuration#add-on-config
+name: Sherpa ONNX STT
+version: "0.1.0"
+slug: sherpa-onnx-stt
+description: Generic multi-model speech-to-text for Home Assistant using sherpa-onnx.
+url: https://github.com/h3llrais3r/hassio-addons/tree/master/sherpa-onnx-stt
+arch:
+  - amd64
+  - aarch64
+init: false
+startup: services
+boot: auto
+options:
+  language: nl-NL
+  languages: "nl-NL,nl-BE"
+  model_archive: "sherpa-onnx-nemo-parakeet-tdt-0.6b-v3-int8.tar.bz2"
+  model_type: offline_transducer
+  num_threads: 4
+  language_option: false
+  offline_model_type: nemo_transducer
+  zeroconf: true
+schema:
+  language: str
+  languages: str
+  model_archive: str
+  model_type: list(auto|online_transducer|offline_transducer)
+  num_threads: int(1,8)
+  language_option: bool
+  offline_model_type: list(transducer|nemo_transducer)
+  zeroconf: bool
+ports:
+  10300/tcp: 10300
+ports_description:
+  10300/tcp: Wyoming STT
+map:
+  - type: addon_config
+    read_only: false
