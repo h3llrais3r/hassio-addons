@@ -186,6 +186,24 @@ def create_recognizer(profile_id: str, model_dir: Path, threads: int, beam_size:
     )
 
 
+def create_offline_recognizer(profile_id: str, model_dir: Path, threads: int):
+    p = PROFILES[profile_id]
+    f = p["files"]
+
+    return sherpa_onnx.OfflineRecognizer.from_transducer(
+        encoder=str(model_dir / f["encoder"]),
+        decoder=str(model_dir / f["decoder"]),
+        joiner=str(model_dir / f["joiner"]),
+        tokens=str(model_dir / f["tokens"]),
+        num_threads=threads,
+        sample_rate=RATE,
+        feature_dim=80,
+        decoding_method="greedy_search",
+        model_type="nemo_transducer",
+        provider="cpu",
+    )
+
+
 def measure_tail_padding(recognizer) -> int:
     # Conservative tail for streaming models. This is only used to flush the
     # final buffered audio and does not affect the live decode path.
@@ -236,6 +254,49 @@ class Session:
         return text, audio_seconds, elapsed, rtf
 
 
+class OfflineSession:
+    def __init__(self, recognizer):
+        self.recognizer = recognizer
+        self.audio = []
+        self.leftover = b""
+        self.audio_samples = 0
+        self.started = time.monotonic()
+
+    def accept(self, pcm: bytes):
+        pcm = self.leftover + pcm
+        if len(pcm) % 2:
+            self.leftover = pcm[-1:]
+            pcm = pcm[:-1]
+        else:
+            self.leftover = b""
+
+        if pcm:
+            samples = np.frombuffer(pcm, dtype=np.int16).copy()
+            self.audio.append(samples)
+            self.audio_samples += len(samples)
+
+    def result(self):
+        if self.leftover:
+            self.audio.append(np.frombuffer(self.leftover + b"\x00", dtype=np.int16).copy())
+            self.audio_samples += 1
+            self.leftover = b""
+
+        if self.audio:
+            samples = np.concatenate(self.audio).astype(np.float32) / 32768.0
+        else:
+            samples = np.zeros(0, dtype=np.float32)
+
+        stream = self.recognizer.create_stream()
+        stream.accept_waveform(RATE, samples)
+        self.recognizer.decode_stream(stream)
+
+        text = stream.result.text
+        elapsed = max(time.monotonic() - self.started, 1e-6)
+        audio_seconds = self.audio_samples / RATE
+        rtf = elapsed / audio_seconds if audio_seconds else 0.0
+        return text, audio_seconds, elapsed, rtf
+
+
 class Handler(AsyncEventHandler):
     def __init__(self, info: Info, recognizer, tail_samples: int, profile_id: str, default_language: str, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -264,13 +325,19 @@ class Handler(AsyncEventHandler):
             return True
 
         if AudioStart.is_type(event.type):
-            self.session = Session(self.recognizer, self.tail_samples, self.language, self.profile["language_option"])
+            if self.profile["kind"] == "offline_transducer":
+                self.session = OfflineSession(self.recognizer)
+            else:
+                self.session = Session(self.recognizer, self.tail_samples, self.language, self.profile["language_option"])
             self.got_audio = False
             return True
 
         if AudioChunk.is_type(event.type):
             if self.session is None:
-                self.session = Session(self.recognizer, self.tail_samples, self.language, self.profile["language_option"])
+                if self.profile["kind"] == "offline_transducer":
+                    self.session = OfflineSession(self.recognizer)
+                else:
+                    self.session = Session(self.recognizer, self.tail_samples, self.language, self.profile["language_option"])
             chunk = self.converter.convert(AudioChunk.from_event(event))
             self.got_audio = True
             await asyncio.to_thread(self.session.accept, chunk.audio)
@@ -302,8 +369,12 @@ async def main():
     logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(name)s: %(message)s")
     model_dir = download_and_extract(profile_id)
     _LOGGER.info("Loading model profile %s from %s", profile_id, model_dir)
-    recognizer = create_recognizer(profile_id, model_dir, threads, beam_size)
-    tail = measure_tail_padding(recognizer)
+    if profile["kind"] == "offline_transducer":
+        recognizer = create_offline_recognizer(profile_id, model_dir, threads)
+        tail = 0
+    else:
+        recognizer = create_recognizer(profile_id, model_dir, threads, beam_size)
+        tail = measure_tail_padding(recognizer)
 
     models = []
     for pid, p in PROFILES.items():
