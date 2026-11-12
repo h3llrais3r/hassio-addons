@@ -88,7 +88,7 @@ PROFILES = {
         "archive": "sherpa-onnx-nemo-parakeet-tdt-0.6b-v3-int8.tar.bz2",
         "kind": "offline_transducer",
         "files": {"encoder": "encoder.int8.onnx", "decoder": "decoder.int8.onnx", "joiner": "joiner.int8.onnx", "tokens": "tokens.txt"},
-        "languages": ["nl-NL"],
+        "languages": ["nl-NL", "nl-BE"],
         "language_option": False,
     },
 }
