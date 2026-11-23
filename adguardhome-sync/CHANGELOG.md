@@ -2,6 +2,11 @@
 
 # Changelog
 
+## 0.10.1
+
+- Upgrade AdGuard Home Sync version to 0.10.1
+- Follow Adguard Home Sync release version
+
 ## 0.3.5
 
 - Upgrade AdGuard Home Sync version to 0.9.6
